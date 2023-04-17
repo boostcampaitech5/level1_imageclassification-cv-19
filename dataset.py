@@ -69,7 +69,7 @@ class CustomAugmentationV2:
             CenterCrop((320, 256)),
             Resize(resize, Image.BILINEAR),
             RandomHorizontalFlip(p=0.5),
-            RandomRotation(degree=20),
+            RandomRotation(degrees=20),
             ColorJitter(0.1, 0.1, 0.1, 0.1),
             ToTensor(),
             Normalize(mean=mean, std=std),
