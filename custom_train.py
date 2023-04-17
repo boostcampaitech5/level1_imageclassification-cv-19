@@ -114,7 +114,7 @@ def acc_per_class(pred, labels, num_classes): #pred, labels는 torch
 
 def train(data_dir, model_dir, args):
     seed_everything(args.seed)    
-    wandb.init(project='lv1-Mask-Detection', entity='level1-cv19', name=args.model, config=vars(args))
+    wandb.init(project='MobileNet', entity='level1-cv19', name=args.name, config=vars(args))
     wandb.tensorboard.patch(save=False, tensorboard_x=True)
     wandb.config = args
     
@@ -220,17 +220,17 @@ def train(data_dir, model_dir, args):
                 logger.add_scalar("Train/loss", train_loss, epoch * len(train_loader) + idx)
                 logger.add_scalar("Train/accuracy", train_acc, epoch * len(train_loader) + idx)
 
-                train_acc_per_class = acc_per_class(preds, labels, num_classes)
+                #train_acc_per_class = acc_per_class(preds, labels, num_classes)
 
                 wandb.log({
                 "Train loss": train_loss,
                 "Train acc" : train_acc,
                 })
                 
-                for i in range(num_classes):
-                    wandb.log({
-                        "Class "+str(i): train_acc_per_class[i]
-                    })
+                # for i in range(num_classes):
+                #     wandb.log({
+                #         "Class "+str(i): train_acc_per_class[i]
+                #     })
                 
                 loss_value = 0
                 matches = 0
@@ -276,9 +276,9 @@ def train(data_dir, model_dir, args):
                 f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2} || "
                 f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2}"
             )
-            val_acc_per_class = acc_per_class(preds, labels, num_classes)
+            #val_acc_per_class = acc_per_class(preds, labels, num_classes)
                 
-            logger.add_scalar("Val/loss", val_loss, epoch)
+            logger.add_scalar("Val/loss", val_loss, epoch) 
             logger.add_scalar("Val/accuracy", val_acc, epoch)
             #logger.add_figure("results", figure, epoch)
             wandb.log({
@@ -286,10 +286,10 @@ def train(data_dir, model_dir, args):
                 "Val acc" : val_acc
             })
 
-            for i in range(num_classes):
-                wandb.log({
-                        "Class "+str(i): val_acc_per_class[i]
-                })
+            # for i in range(num_classes):
+            #     wandb.log({
+            #             "Class "+str(i): val_acc_per_class[i]
+            #     })
                 
                 
         #wandb.finish()  
