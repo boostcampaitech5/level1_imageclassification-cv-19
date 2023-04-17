@@ -57,13 +57,13 @@ class MobileNet(nn.Module):
         self.mobilenet = torchvision.models.mobilenet_v2(pretrained=True)
         self.dropout = nn.Dropout(0.25)
         #self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.relu = nn.ReLU()
+        #self.relu = nn.ReLU()
         self.fc = nn.Linear(1000, num_classes)
 
     def forward(self, x):
         x = self.mobilenet(x)
         x = self.dropout(x)
-        x = self.relu(x)
+        #x = self.relu(x)
         return self.fc(x)
 
 # Custom Model Template
