@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models 
-from facenet_pytorch import  MTCNN, InceptionResnetV1, fixed_image_standardization, training
+from facenet_pytorch import MTCNN, InceptionResnetV1, fixed_image_standardization, training
 
 # Custom Model Template
 class MyModel(nn.Module):
@@ -109,13 +109,9 @@ class FaceNet(nn.Module):
             print(name, param.requires_grad)
         '''
                 
-                
+           
     def forward(self, x):
         
         x = self.facenet(x)
         x = self.relu(x)
         return self.fc(x)
-
-# model = FaceNet(3)
-# print(model)
-
