@@ -171,7 +171,7 @@ def train(data_dir, model_dir, args):
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
-    criterion = create_criterion(args.criterion)  # default: cross_entropy
+    criterion = create_criterion(args.criterion, classes=num_classes)  # default: cross_entropy
     opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
     optimizer = opt_module(
         filter(lambda p: p.requires_grad, model.parameters()),
@@ -268,9 +268,6 @@ def train(data_dir, model_dir, args):
                     figure = grid_image(
                         inputs_np, labels, preds, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"
                     )
-            # print(val_f1_score_items)
-            # print(len(val_f1_score_items))
-            # return 
         
             val_f1_score = np.sum(val_f1_score_items) / len(val_loader)
             val_loss = np.sum(val_loss_items) / len(val_loader)
@@ -286,11 +283,11 @@ def train(data_dir, model_dir, args):
                 f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2} ||"
                 f"f1_Score: {val_f1_score:4.2%}"
             )
-            3val_acc_per_class = acc_per_class(preds, labels, num_classes)
+            #val_acc_per_class = acc_per_class(preds, labels, num_classes)
                 
             logger.add_scalar("Val/loss", val_loss, epoch) 
             logger.add_scalar("Val/accuracy", val_acc, epoch)
-            #logger.add_figure("results", figure, epoch)
+            logger.add_figure("results", figure, epoch)
             wandb.log({
                 "Val loss":  val_loss,
                 "Val acc" : val_acc,
