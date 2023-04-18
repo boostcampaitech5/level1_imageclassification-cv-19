@@ -5,12 +5,13 @@ import torch.nn.functional as F
 
 # https://discuss.pytorch.org/t/is-this-a-correct-implementation-for-focal-loss-in-pytorch/43327/8
 class FocalLoss(nn.Module):
-    def __init__(self, weight=None,
+    def __init__(self, weight=None, classes = 3*2*3,
                  gamma=2., reduction='mean'):
         nn.Module.__init__(self)
         self.weight = weight
         self.gamma = gamma
         self.reduction = reduction
+        self.classes = classes
 
     def forward(self, input_tensor, target_tensor):
         log_prob = F.log_softmax(input_tensor, dim=-1)
