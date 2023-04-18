@@ -49,22 +49,21 @@ class ENet(nn.Module):
         x = self.enet(x)
         return self.fc(x)
     
-# Custom Model Template
+# MobileNet
 class MobileNet(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
 
-        self.mobilenet = torchvision.models.mobilenet_v2(pretrained=True)
-        self.dropout = nn.Dropout(0.25)
+        weights=torchvision.models.MobileNet_V2_Weights.DEFAULT
+        self.mobilenet = torchvision.models.mobilenet_v2(weights = weights)
+        #self.dropout = nn.Dropout(0.25)
         #self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         #self.relu = nn.ReLU()
-        self.fc = nn.Linear(1000, num_classes)
+        self.mobilenet.classifier[1] = nn.Linear(1280, num_classes)
 
     def forward(self, x):
         x = self.mobilenet(x)
-        x = self.dropout(x)
-        #x = self.relu(x)
-        return self.fc(x)
+        return x
 
 # Custom Model Template
 class MyModel(nn.Module):
