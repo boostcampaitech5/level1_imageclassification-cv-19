@@ -115,7 +115,7 @@ def acc_per_class(pred, labels, num_classes): #pred, labels는 torch
 
 def train(data_dir, model_dir, args):
     seed_everything(args.seed)    
-    wandb.init(project='MobileNet', entity='level1-cv19', name=args.name, config=vars(args))
+    wandb.init(project=args.model, entity='level1-cv19', name=args.name, config=vars(args))
     wandb.tensorboard.patch(save=False, tensorboard_x=True)
     wandb.config = args
     
@@ -226,7 +226,7 @@ def train(data_dir, model_dir, args):
                 wandb.log({
                 "Train loss": train_loss,
                 "Train acc" : train_acc,
-                }, step = idx)
+                }) #, step = idx)
                 
                 # for i in range(num_classes):
                 #     wandb.log({
