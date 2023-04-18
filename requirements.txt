@@ -14,3 +14,4 @@ Pillow==7.2.0
 #conda install -c conda-forge wandb
 #conda install -c conda-forge tqdm
 #pip install torcheval
+#pip install facenet-pytorch
