@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     data_dir = args.data_dir
     model_dir = args.model_dir
-    output_dir = args.output_dir
+    output_dir = args.model_dir #output_dir
 
     os.makedirs(output_dir, exist_ok=True)
 
