@@ -14,6 +14,7 @@ import torch
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
+from torcheval.metrics.functional import multiclass_f1_score
 #import pre-trained model 
 
 from dataset import MaskBaseDataset
@@ -225,7 +226,7 @@ def train(data_dir, model_dir, args):
                 wandb.log({
                 "Train loss": train_loss,
                 "Train acc" : train_acc,
-                })
+                }, step = idx)
                 
                 # for i in range(num_classes):
                 #     wandb.log({
@@ -243,6 +244,7 @@ def train(data_dir, model_dir, args):
             model.eval()
             val_loss_items = []
             val_acc_items = []
+            val_f1_score_items = []
             figure = None
             for val_batch in val_loader:
                 inputs, labels = val_batch
@@ -254,8 +256,11 @@ def train(data_dir, model_dir, args):
 
                 loss_item = criterion(outs, labels).item()
                 acc_item = (labels == preds).sum().item()
+                f1_score_item = multiclass_f1_score(preds, labels , 
+                                               num_classes=num_classes, average="micro").item()
                 val_loss_items.append(loss_item)
                 val_acc_items.append(acc_item)
+                val_f1_score_items.append(f1_score_item)
 
                 if figure is None:
                     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
@@ -263,7 +268,11 @@ def train(data_dir, model_dir, args):
                     figure = grid_image(
                         inputs_np, labels, preds, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"
                     )
-
+            # print(val_f1_score_items)
+            # print(len(val_f1_score_items))
+            # return 
+        
+            val_f1_score = np.sum(val_f1_score_items) / len(val_loader)
             val_loss = np.sum(val_loss_items) / len(val_loader)
             val_acc = np.sum(val_acc_items) / len(val_set)
             best_val_loss = min(best_val_loss, val_loss)
@@ -274,22 +283,24 @@ def train(data_dir, model_dir, args):
             torch.save(model.module.state_dict(), f"{save_dir}/last.pth")
             print(
                 f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2} || "
-                f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2}"
+                f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2} ||"
+                f"f1_Score: {val_f1_score:4.2%}"
             )
-            #val_acc_per_class = acc_per_class(preds, labels, num_classes)
+            val_acc_per_class = acc_per_class(preds, labels, num_classes)
                 
             logger.add_scalar("Val/loss", val_loss, epoch) 
             logger.add_scalar("Val/accuracy", val_acc, epoch)
             #logger.add_figure("results", figure, epoch)
             wandb.log({
                 "Val loss":  val_loss,
-                "Val acc" : val_acc
+                "Val acc" : val_acc,
+                "Val f1_score": val_f1_score
             })
 
-            # for i in range(num_classes):
-            #     wandb.log({
-            #             "Class "+str(i): val_acc_per_class[i]
-            #     })
+            for i in range(num_classes):
+                wandb.log({
+                        "Class "+str(i): val_acc_per_class[i]
+                })
                 
                 
         #wandb.finish()  
