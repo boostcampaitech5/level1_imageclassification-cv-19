@@ -286,7 +286,7 @@ def train(data_dir, model_dir, args):
                 f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2} ||"
                 f"f1_Score: {val_f1_score:4.2%}"
             )
-            val_acc_per_class = acc_per_class(preds, labels, num_classes)
+            3val_acc_per_class = acc_per_class(preds, labels, num_classes)
                 
             logger.add_scalar("Val/loss", val_loss, epoch) 
             logger.add_scalar("Val/accuracy", val_acc, epoch)
@@ -297,10 +297,10 @@ def train(data_dir, model_dir, args):
                 "Val f1_score": val_f1_score
             })
 
-            for i in range(num_classes):
-                wandb.log({
-                        "Class "+str(i): val_acc_per_class[i]
-                })
+            # for i in range(num_classes):
+            #     wandb.log({
+            #             "Class "+str(i): val_acc_per_class[i]
+            #     })
                 
                 
         #wandb.finish()  
