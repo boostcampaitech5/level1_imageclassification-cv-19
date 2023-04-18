@@ -7,6 +7,7 @@ import random
 import re
 from importlib import import_module
 from pathlib import Path
+from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,9 +27,12 @@ from datetime import datetime
 ##Experiment Toolkit
 import wandb
 
+#hyperparemeters
+import hyperparameters as hp
+
 now = datetime.now(timezone('Asia/Seoul'))
 folder_name = now.strftime('%Y-%m-%d-%H-%M-%S') 
-#print(folder_name)
+
 
 def seed_everything(seed):
     torch.manual_seed(seed)
@@ -109,7 +113,7 @@ def acc_per_class(pred, labels, num_classes): #pred, labels는 torch
         if labels_per_class[i] == 0:
             class_acc[i] = 0
         else:
-            class_acc[i] = np.round(labels_hit[i]/labels_per_class[i], 3)
+            class_acc[i] = np.round(float(labels_hit[i])/float(labels_per_class[i]), 3)
     
     return class_acc
 
@@ -186,6 +190,15 @@ def train(data_dir, model_dir, args):
     with open(os.path.join(save_dir, 'config.json'), 'w', encoding='utf-8') as f:
         json.dump(vars(args), f, ensure_ascii=False, indent=4)
 
+    # for calculating label acc per class 
+    def concat_label(labels, mask_label, gen_label, age_label):
+        mask_lb, gen_lb, age_lb = dataset.decode_multi_class(labels) 
+        mask_label = torch.concat((mask_label, mask_lb.to(mask_label.device)), dim = 0)
+        gen_label = torch.concat((gen_label, gen_lb.to(gen_label.device)), dim = 0)
+        age_label = torch.concat((age_label, age_lb.to(age_label.device)), dim = 0)
+        
+        return mask_label, gen_label, age_label
+    
     best_val_acc = 0
     best_val_loss = np.inf
     for epoch in range(args.epochs):
@@ -245,6 +258,15 @@ def train(data_dir, model_dir, args):
             val_loss_items = []
             val_acc_items = []
             val_f1_score_items = []
+            
+            #epoch 당 각 label의 acc를 계산하고 싶음 
+            pred_mask_label = torch.tensor([])
+            pred_gen_label = torch.tensor([])
+            pred_age_label = torch.tensor([])
+            gt_mask_label = torch.tensor([])
+            gt_gen_label = torch.tensor([])
+            gt_age_label = torch.tensor([])
+                      
             figure = None
             for val_batch in val_loader:
                 inputs, labels = val_batch
@@ -253,9 +275,11 @@ def train(data_dir, model_dir, args):
 
                 outs = model(inputs)
                 preds = torch.argmax(outs, dim=-1)
-
+                
                 loss_item = criterion(outs, labels).item()
                 acc_item = (labels == preds).sum().item()
+                
+                
                 f1_score_item = multiclass_f1_score(preds, labels , 
                                                num_classes=num_classes, average="micro").item()
                 val_loss_items.append(loss_item)
@@ -268,7 +292,10 @@ def train(data_dir, model_dir, args):
                     figure = grid_image(
                         inputs_np, labels, preds, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"
                     )
-        
+                    
+                    pred_mask_label, pred_gen_label, pred_age_label = concat_label(preds, pred_mask_label, pred_gen_label, pred_age_label)
+                    gt_mask_label, gt_gen_label, gt_age_label = concat_label(labels, gt_mask_label, gt_gen_label, gt_age_label)
+                                
             val_f1_score = np.sum(val_f1_score_items) / len(val_loader)
             val_loss = np.sum(val_loss_items) / len(val_loader)
             val_acc = np.sum(val_acc_items) / len(val_set)
@@ -294,6 +321,24 @@ def train(data_dir, model_dir, args):
                 "Val f1_score": val_f1_score
             })
 
+            val_mask_acc = acc_per_class(pred_mask_label, gt_mask_label, 3)
+            val_gen_acc = acc_per_class(pred_gen_label, gt_gen_label, 2)
+            val_age_acc= acc_per_class(pred_age_label, gt_age_label, 3)
+
+            wandb.log({
+                "(Mask) MASK ": val_mask_acc[0],
+                "(Mask) INCORRECT ": val_mask_acc[1],
+                "(Mask) NORMAL ": val_mask_acc[2],
+                
+                "(Gender) MALE ": val_gen_acc[0],
+                "(Gender) FEMALE ": val_gen_acc[1],
+                
+                "(Age) YOUNG ": val_age_acc[0],
+                "(Age) MIDDLE ": val_age_acc[1],
+                "(Age) OLD ": val_age_acc[2],
+            })
+
+            
             # for i in range(num_classes):
             #     wandb.log({
             #             "Class "+str(i): val_acc_per_class[i]
@@ -312,7 +357,7 @@ if __name__ == '__main__':
     parser.add_argument('--augmentation', type=str, default='BaseAugmentation', help='data augmentation type (default: BaseAugmentation)')
     parser.add_argument("--resize", nargs="+", type=list, default=[128, 96], help='resize size for image when training')
     parser.add_argument('--batch_size', type=int, default=64, help='input batch size for training (default: 64)')
-    parser.add_argument('--valid_batch_size', type=int, default=64, help='input batch size for validing (default: 64)')
+    parser.add_argument('--valid_batch_size', type=int, default=1000, help='input batch size for validing (default: 1000)')
     parser.add_argument('--model', type=str, default='BaseModel', help='model type (default: BaseModel)')
     parser.add_argument('--optimizer', type=str, default='Adam', help='optimizer type (default: Adam)')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate (default: 1e-3)')
