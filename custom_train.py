@@ -198,7 +198,13 @@ def train(data_dir, model_dir, args):
         age_label = torch.concat((age_label, age_lb.to(age_label.device)), dim = 0)
         
         return mask_label, gen_label, age_label
-    
+
+    def concat_single_label(labels, single_label):
+        single_lb = dataset.decode_multi_class(labels) 
+        single_label = torch.concat((single_label, single_lb.to(single_label.device)), dim = 0)
+        
+        return single_lb
+        
     best_val_acc = 0
     best_val_loss = np.inf
     for epoch in range(args.epochs):
@@ -378,3 +384,6 @@ if __name__ == '__main__':
     model_dir = args.model_dir
 
     train(data_dir, model_dir, args)
+
+
+#python3 custom_train.py --model 'MobileNet' --name 'MobileNet_ageonly_uppercrop_ce' --augmentation 'UpperFaceCropAugmentation' --epoch 30
