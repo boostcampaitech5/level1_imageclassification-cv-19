@@ -73,8 +73,8 @@ class UpperFaceCropAugmentation:
         self.transform = Compose([
             CenterCrop(200),
             Lambda(crop_upper),
+            RandomHorizontalFlip(p=0.5),
             Resize(resize, Image.BILINEAR),
-            ColorJitter(0.1, 0.1, 0.1, 0.1),
             ToTensor(),
             Normalize(mean=mean, std=std),
             AddGaussianNoise()
