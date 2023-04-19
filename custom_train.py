@@ -114,7 +114,7 @@ def acc_per_class(pred, labels, num_classes): #pred, labels는 torch
 
 def train(data_dir, model_dir, args):
     seed_everything(args.seed)    
-    wandb.init(project='lv1-Mask-Detection', entity='level1-cv19', name=args.model, config=vars(args))
+    wandb.init(project=args.model, entity='level1-cv19', name=args.name, config=vars(args))
     wandb.tensorboard.patch(save=False, tensorboard_x=True)
     wandb.config = args
     
