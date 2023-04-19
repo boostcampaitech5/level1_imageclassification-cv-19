@@ -12,16 +12,10 @@ from dataset import TestDataset, MaskBaseDataset
 
 
 def load_model(saved_model, num_classes, device):
-    #pretrained = resnet152(pretrained=True)
     model_cls = getattr(import_module("model"), args.model)
     model = model_cls(
         num_classes=num_classes
     )
-
-    # tarpath = os.path.join(saved_model, 'best.tar.gz')
-    # tar = tarfile.open(tarpath, 'r:gz')
-    # tar.extractall(path=saved_model)
-
     model_path = os.path.join(saved_model, 'best.pth')
     model.load_state_dict(torch.load(model_path, map_location=device))
 
@@ -93,15 +87,17 @@ if __name__ == '__main__':
 
     # Container environment
     parser.add_argument('--data_dir', type=str, default=os.environ.get('SM_CHANNEL_EVAL', '/opt/ml/input/data/eval'))
-    # parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_CHANNEL_MODEL', './model/exp'))
+    parser.add_argument('--model_dir', type=str, default=os.environ.get('SM_CHANNEL_MODEL', './model/exp'))
     # parser.add_argument('--output_dir', type=str, default=os.environ.get('SM_OUTPUT_DATA_DIR', './output'))
-    parser.add_argument('--model_name', type=str, default=os.environ.get('SM_CHANNEL_MODEL', 'exp'))
+    #parser.add_argument('--model_name', type=str, default=os.environ.get('SM_CHANNEL_MODEL', 'exp'))
     args = parser.parse_args()
 
     data_dir = args.data_dir
-    model_dir = os.path.join('./model',args.model_name)
+    model_dir = args.model_dir #os.path.join('./results', args.model_name)
     output_dir = model_dir
 
     os.makedirs(output_dir, exist_ok=True)
 
     inference(data_dir, model_dir, output_dir, args)
+    
+    #python3 kfold_inference.py --model 'MobileNet' --model_dir '/opt/ml/results/2023-04-19-21:36:46'
