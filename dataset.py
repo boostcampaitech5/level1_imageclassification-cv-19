@@ -8,7 +8,8 @@ import numpy as np
 import torch
 from PIL import Image
 from torch.utils.data import Dataset, Subset, random_split
-from torchvision.transforms import Resize, ToTensor, Normalize, Compose, CenterCrop, ColorJitter, RandomHorizontalFlip, RandomRotation
+from torchvision.transforms import Lambda, Resize, ToTensor, Normalize, Compose, CenterCrop, ColorJitter, RandomHorizontalFlip, RandomRotation
+from torchvision.transforms.functional import crop, get_image_size
 
 IMG_EXTENSIONS = [
     ".jpg", ".JPG", ".jpeg", ".JPEG", ".png",
@@ -63,6 +64,25 @@ class CustomAugmentation:
     def __call__(self, image):
         return self.transform(image)
 
+def crop_upper(image):
+    width, height = get_image_size(image)
+    return crop(image, 10, 0, height//2, width)
+
+class UpperFaceCropAugmentation:
+    def __init__(self, resize, mean, std, **args):
+        self.transform = Compose([
+            CenterCrop(200),
+            Lambda(crop_upper),
+            Resize(resize, Image.BILINEAR),
+            ColorJitter(0.1, 0.1, 0.1, 0.1),
+            ToTensor(),
+            Normalize(mean=mean, std=std),
+            AddGaussianNoise()
+        ])
+
+    def __call__(self, image):
+        return self.transform(image)
+    
 class CustomAugmentationV2:
     def __init__(self, resize, mean, std, **args):
         self.transform = Compose([
