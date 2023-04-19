@@ -281,7 +281,7 @@ def train(data_dir, model_dir, args):
                 
                 
                 f1_score_item = multiclass_f1_score(preds, labels , 
-                                               num_classes=num_classes, average="micro").item()
+                                               num_classes=num_classes, average="macro").item()
                 val_loss_items.append(loss_item)
                 val_acc_items.append(acc_item)
                 val_f1_score_items.append(f1_score_item)
