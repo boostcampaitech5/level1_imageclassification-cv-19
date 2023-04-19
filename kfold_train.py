@@ -14,6 +14,7 @@ import torch
 from torch.optim.lr_scheduler import StepLR
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
+from torcheval.metrics.functional import multiclass_f1_score
 
 from dataset import MaskBaseDataset
 from loss import create_criterion
@@ -93,9 +94,32 @@ def increment_path(path, exist_ok=False):
         return f"{path}{n}"
 
 
+def acc_per_class(pred, labels, num_classes): #pred, labels는 torch 
+
+    labels_per_class = {i: 0 for i in range(num_classes)} #label안에 각 class의 갯수 (정답 갯수)
+    labels_hit = {i: 0 for i in range(num_classes)}
+    label_arr = labels.clone().detach().cpu().numpy()
+    pred_arr = pred.clone().detach().cpu().numpy()
+    
+    for i in range(pred.shape[0]):    
+        labels_per_class[label_arr[i]] += 1
+        if pred_arr[i] == label_arr[i]:
+            labels_hit[label_arr[i]] += 1
+    
+    class_acc = {i:0 for i in range(num_classes)} #class 별 acc 값     
+    for i in range(num_classes):
+        if labels_per_class[i] == 0:
+            class_acc[i] = 0
+        else:
+            class_acc[i] = np.round(float(labels_hit[i])/float(labels_per_class[i]), 3)
+    
+    return class_acc
+
+
 def train(data_dir, model_dir, args):
     seed_everything(args.seed)
-    train_csv = pd.read_csv('/opt/ml/v2/train_labeled6.csv') #TODO add label to csv
+    
+    train_csv = pd.read_csv('/opt/ml/code/mk_classification/train_labeled6.csv') #TODO add label to csv
     # 5개의 폴드 세트로 분리하는 StratifiedKFold 세트 생성
     skfold = StratifiedKFold(n_splits=args.k, shuffle=True, random_state=2022)
     #save_dir = increment_path(os.path.join(model_dir, args.name))
@@ -172,7 +196,7 @@ def train(data_dir, model_dir, args):
         model = torch.nn.DataParallel(model)
 
         # -- loss & metric
-        criterion = create_criterion(args.criterion)  # default: cross_entropy
+        criterion = create_criterion(args.criterion, classes=num_classes) # default: cross_entropy
         opt_module = getattr(import_module("torch.optim"),
                             args.optimizer)  # default: SGD
         optimizer = opt_module(
@@ -187,13 +211,23 @@ def train(data_dir, model_dir, args):
         with open(os.path.join(save_fold_dir, 'config.json'), 'w', encoding='utf-8') as f:
             json.dump(vars(args), f, ensure_ascii=False, indent=4)
 
-        # wandb
-        wandb.init(project='Resnet_Test', entity='level1-cv19', name=f'{args.model_name}-{str(fold)}', config=vars(args))
+        # -- wandb
+        wandb.init(project= args.model+'_'+str(args.k)+'fold', entity='level1-cv19', name=f'{args.name}-{str(fold)}', config=vars(args))
         #wandb.run.save()
         wandb.config = args
         
         #wandb.tensorboard.patch(save=False, tensorboard_x=True)
         
+        # -- for calculating label acc per class 
+        def concat_label(labels, mask_label, gen_label, age_label):
+            mask_lb, gen_lb, age_lb = dataset.decode_multi_class(labels) 
+            mask_label = torch.concat((mask_label, mask_lb.to(mask_label.device)), dim = 0)
+            gen_label = torch.concat((gen_label, gen_lb.to(gen_label.device)), dim = 0)
+            age_label = torch.concat((age_label, age_lb.to(age_label.device)), dim = 0)
+        
+            return mask_label, gen_label, age_label
+
+
         best_val_acc = 0
         best_val_loss = np.inf
         for epoch in range(args.epochs):
@@ -242,7 +276,17 @@ def train(data_dir, model_dir, args):
                 model.eval()
                 val_loss_items = []
                 val_acc_items = []
+                val_f1_score_items = []
                 figure = None
+                
+                #epoch 당 각 label의 acc를 계산하고 싶음 
+                pred_mask_label = torch.tensor([])
+                pred_gen_label = torch.tensor([])
+                pred_age_label = torch.tensor([])
+                gt_mask_label = torch.tensor([])
+                gt_gen_label = torch.tensor([])
+                gt_age_label = torch.tensor([])
+                
                 for val_batch in val_loader:
                     inputs, labels = val_batch
                     inputs = inputs.to(device)
@@ -253,8 +297,11 @@ def train(data_dir, model_dir, args):
 
                     loss_item = criterion(outs, labels).item()
                     acc_item = (labels == preds).sum().item()
+                    f1_score_item = multiclass_f1_score(preds, labels , 
+                                                num_classes=num_classes, average="macro").item()
                     val_loss_items.append(loss_item)
                     val_acc_items.append(acc_item)
+                    val_f1_score_items.append(f1_score_item)
 
                     if figure is None:
                         inputs_np = torch.clone(inputs).detach(
@@ -264,7 +311,11 @@ def train(data_dir, model_dir, args):
                         figure = grid_image(
                             inputs_np, labels, preds, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"
                         )
-
+                        
+                        pred_mask_label, pred_gen_label, pred_age_label = concat_label(preds, pred_mask_label, pred_gen_label, pred_age_label)
+                        gt_mask_label, gt_gen_label, gt_age_label = concat_label(labels, gt_mask_label, gt_gen_label, gt_age_label)
+                     
+                val_f1_score = np.sum(val_f1_score_items) / len(val_loader)
                 val_loss = np.sum(val_loss_items) / len(val_loader)
                 val_acc = np.sum(val_acc_items) / len(val_index) #val_set이 없으므로 val_index가 대신합니다.
                 best_val_loss = min(best_val_loss, val_loss)
@@ -276,13 +327,32 @@ def train(data_dir, model_dir, args):
                 torch.save(model.module.state_dict(), f"{save_fold_dir}/last.pth")
                 print(
                     f"[Val] acc : {val_acc:4.2%}, loss: {val_loss:4.2} || "
-                    f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2}"
+                    f"best acc : {best_val_acc:4.2%}, best loss: {best_val_loss:4.2} ||"
+                    f"f1_Score: {val_f1_score:4.2%}"
                 )
                 logger.add_scalar("Val/loss", val_loss, epoch)
                 logger.add_scalar("Val/accuracy", val_acc, epoch)
                 logger.add_figure("results", figure, epoch)
-                wandb.log({"Validation": {"loss": val_loss, "accuracy": val_acc}}) #step 옵션을 주지 않으니까 잘 출력이 되는 것을 볼 수 있습니다.
+                wandb.log({"Validation": {"loss": val_loss, "accuracy": val_acc, "f1_score": val_f1_score}}) #step 옵션을 주지 않으니까 잘 출력이 되는 것을 볼 수 있습니다.
                 wandb.log({"results": figure})
+                
+                val_mask_acc = acc_per_class(pred_mask_label, gt_mask_label, 3)
+                val_gen_acc = acc_per_class(pred_gen_label, gt_gen_label, 2)
+                val_age_acc= acc_per_class(pred_age_label, gt_age_label, 3)
+
+                wandb.log({
+                    "(Mask) MASK ": val_mask_acc[0],
+                    "(Mask) INCORRECT ": val_mask_acc[1],
+                    "(Mask) NORMAL ": val_mask_acc[2],
+                    
+                    "(Gender) MALE ": val_gen_acc[0],
+                    "(Gender) FEMALE ": val_gen_acc[1],
+                    
+                    "(Age) YOUNG ": val_age_acc[0],
+                    "(Age) MIDDLE ": val_age_acc[1],
+                    "(Age) OLD ": val_age_acc[2],
+                })
+
                 print()
         #k번의 반복마다 wandb.init을 사용하므로 반복이 끝날 때 wandb.finish()를 사용합니다.        
         wandb.finish() 
@@ -322,8 +392,8 @@ if __name__ == '__main__':
                         help='how many batches to wait before logging training status')
     parser.add_argument('--name', default='folder_name',
                         help='model save at {SM_MODEL_DIR}/{name}')
-    parser.add_argument('--model_name', type=str, default='Mymodel',
-                        help='wandb model name (default: Mymodel)')
+    #parser.add_argument('--model_name', type=str, default='Mymodel',
+    #                    help='wandb model name (default: Mymodel)')
     #k개의 fold로 데이터셋을 나눌 수 있습니다.
     parser.add_argument('--k', type=int, default=5,
                         help='number of folds to split (default: 5)')
@@ -331,7 +401,7 @@ if __name__ == '__main__':
     parser.add_argument('--data_dir', type=str, default=os.environ.get(
         'SM_CHANNEL_TRAIN', '/opt/ml/input/data/train/images'))
     parser.add_argument('--model_dir', type=str,
-                        default=os.environ.get('SM_MODEL_DIR', './model'))
+                        default=os.environ.get('SM_MODEL_DIR', '/opt/ml/results'))
 
     args = parser.parse_args()
     print(args)
@@ -340,3 +410,5 @@ if __name__ == '__main__':
     model_dir = args.model_dir
 
     train(data_dir, model_dir, args)
+    
+    #python3 kfold_train.py --augmentation 'UpperFaceCropAugmentation' --model 'MobileNet' --criterion 'focal' --name 'MobileKfoldTest'
