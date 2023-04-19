@@ -175,7 +175,7 @@ def train(data_dir, model_dir, args):
     model = torch.nn.DataParallel(model)
 
     # -- loss & metric
-    criterion = create_criterion(args.criterion, classes=num_classes)  # default: cross_entropy
+    criterion = create_criterion(args.criterion, classes=num_classes)  # default: cross_entropy        
     opt_module = getattr(import_module("torch.optim"), args.optimizer)  # default: SGD
     optimizer = opt_module(
         filter(lambda p: p.requires_grad, model.parameters()),
