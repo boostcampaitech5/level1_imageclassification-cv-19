@@ -11,7 +11,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-from torch.optim.lr_scheduler import StepLR
+from torch.optim.lr_scheduler import StepLR, CosineAnnealingLR
 from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torcheval.metrics.functional import multiclass_f1_score
@@ -123,9 +123,9 @@ def train(data_dir, model_dir, args):
     # 5개의 폴드 세트로 분리하는 StratifiedKFold 세트 생성
     skfold = StratifiedKFold(n_splits=args.k, shuffle=True, random_state=2022)
     #save_dir = increment_path(os.path.join(model_dir, args.name))
-    save_dir = os.path.join(model_dir, folder_name) # ./model/현재 날짜
+    save_dir = os.path.join(model_dir, args.name) # ./model/현재 날짜
     for fold, (train_ids, test_ids) in enumerate(skfold.split(X=train_csv.id, y=train_csv.label)):
-        save_fold_name = folder_name + '-' + str(fold)
+        save_fold_name = args.name + '-' + str(fold)
         save_fold_dir = os.path.join(save_dir, save_fold_name)
         #train_ids와 test_ids에서는 2700개의 데이터에서의 인덱스를 넘겨줍니다.
         #따라서 아래의 계산으로 이미지마다의 인덱스를 가져옵니다. 
@@ -204,7 +204,8 @@ def train(data_dir, model_dir, args):
             lr=args.lr,
             weight_decay=5e-4
         )
-        scheduler = StepLR(optimizer, args.lr_decay_step, gamma=0.5)
+        #scheduler = StepLR(optimizer, args.lr_decay_step, gamma=0.5)
+        scheduler = CosineAnnealingLR(optimizer, T_max=5, eta_min=1e-4)
 
         # -- logging
         logger = SummaryWriter(log_dir=save_fold_dir)
