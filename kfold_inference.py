@@ -62,7 +62,7 @@ def inference(data_dir, model_dir, output_dir, args):
                 preds.extend(pred.cpu().numpy())
             fold_pred = np.array(preds)
         n_splits = len(model_dir_list)
-        # 확률 값으로 앙상블을 진행하기 때문에 'k'개로 나누어줍니다.
+        # 확률 값으로 앙상블을 진행하기 때문에 'k'개로 나누어줍니다. 
         if oof_pred is None:
             oof_pred = fold_pred / n_splits
         else:
