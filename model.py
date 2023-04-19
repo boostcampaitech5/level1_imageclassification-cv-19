@@ -53,7 +53,7 @@ class BaseModel(nn.Module):
         return self.fc(x)
 
 #EfficientNet (torchvision=0.8.1에는 없음, 0.13 이상!)
-class ENet(nn.Module):
+class EfficientNet(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
 
@@ -115,3 +115,19 @@ class FaceNet(nn.Module):
         x = self.facenet(x)
         x = self.relu(x)
         return self.fc(x)
+
+# ResNet
+class ResNet(nn.Module):
+    def __init__(self, num_classes):
+        super().__init__()
+
+        weights=torchvision.models.ResNet34_Weights.DEFAULT
+        self.mobilenet = torchvision.models.resnet34(weights = weights)
+        #self.dropout = nn.Dropout(0.25)
+        #self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        #self.relu = nn.ReLU()
+        self.mobilenet.classifier[1] = nn.Linear(1280, num_classes)
+
+    def forward(self, x):
+        x = self.mobilenet(x)
+        return x
