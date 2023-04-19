@@ -55,7 +55,6 @@ class CustomAugmentation:
         self.transform = Compose([
             CenterCrop((320, 256)),
             Resize(resize, Image.BILINEAR),
-            ColorJitter(0.1, 0.1, 0.1, 0.1),
             ToTensor(),
             Normalize(mean=mean, std=std),
             AddGaussianNoise()
