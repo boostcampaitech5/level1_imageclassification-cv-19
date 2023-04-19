@@ -66,9 +66,21 @@ class F1Loss(nn.Module):
         f1 = f1.clamp(min=self.epsilon, max=1 - self.epsilon)
         return 1 - f1.mean()
 
+class CELoss(nn.Module):
+    def __init__(self, classes=3*2*3):
+        nn.Module.__init__(self)
+        self.celoss = nn.CrossEntropyLoss()
+        self.cls = classes
+        
+    def forward(self, input_tensor, target_tensor):
+        return self.celoss(input_tensor, target_tensor)
+        
+        
+# celoss = CELoss(3)
+# celoss(torch.randn(3, 5, requires_grad=True), torch.empty(3, dtype=torch.long).random_(5))
 
 _criterion_entrypoints = {
-    'cross_entropy': nn.CrossEntropyLoss,
+    'cross_entropy': CELoss,
     'focal': FocalLoss,
     'label_smoothing': LabelSmoothingLoss,
     'f1': F1Loss
