@@ -125,6 +125,8 @@ def train(data_dir, model_dir, args):
     #save_dir = increment_path(os.path.join(model_dir, args.name))
     save_dir = os.path.join(model_dir, args.name) # ./model/현재 날짜
     for fold, (train_ids, test_ids) in enumerate(skfold.split(X=train_csv.id, y=train_csv.label)):
+        # if fold > 0:
+        #     break 
         save_fold_name = args.name + '-' + str(fold)
         save_fold_dir = os.path.join(save_dir, save_fold_name)
         #train_ids와 test_ids에서는 2700개의 데이터에서의 인덱스를 넘겨줍니다.
