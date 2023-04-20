@@ -379,8 +379,8 @@ if __name__ == '__main__':
                         help='input batch size for validing (default: 1000)')
     parser.add_argument('--model', type=str, default='MyModel',
                         help='model type (default: MyModel)')
-    parser.add_argument('--optimizer', type=str, default='Adam',
-                        help='optimizer type (default: Adam)')
+    parser.add_argument('--optimizer', type=str, default='AdamW',
+                        help='optimizer type (default: AdamW)')
     parser.add_argument('--lr', type=float, default=1e-3,
                         help='learning rate (default: 1e-3)')
     parser.add_argument('--val_ratio', type=float, default=0.2,
