@@ -30,7 +30,11 @@ def inference(data_dir, model_dir, output_dir, args):
     device = torch.device("cuda" if use_cuda else "cpu")
 
     num_classes = MaskBaseDataset.num_classes  # 18
-    model_dir_list = os.listdir(model_dir)
+    #model_dir_list = os.listdir(model_dir)
+    model_dir_list = ['/opt/ml/results/MobileNet5fold_baseaug_ce/MobileNet5fold_baseaug_ce-0', 
+                      '/opt/ml/results/MobileNet5fold_baseaug_ce/MobileNet5fold_baseaug_ce-3', 
+                      '/opt/ml/results/MobileNet5fold_baseaug_ce/MobileNet5fold_baseaug_ce-4'
+                      ]
     oof_pred = None
     for fold_model in model_dir_list:
         fold_model_path = os.path.join(model_dir, fold_model)
