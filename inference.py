@@ -25,10 +25,6 @@ def load_model(saved_model, num_classes, device):
 
     return model
 
-'''
-두 모델의 결과를 잘 조합하여 최종 label을 설정해보자 
-'''
-
 @torch.no_grad()
 def inference(data_dir, model_dir, output_dir, args):
     """
