@@ -26,7 +26,7 @@ level1_imageclassification-cv-19 created by GitHub Classroom
 | 박준서 | MobileNetV2, ResNet, ConvNext Tiny | Wandb 실험 환경 구성, 교차 검증 셋팅, Error Analysis, 모델 앙상블 |
 | 서지희 | EfficientNet | Notion template 구축, Error Analysis, 모델 앙상블 |
 | 장철호 | DenseNet | Error Analysis, 모델 앙상블 |
-| 한나영 | MobileNetV2, FaceNet | EDA, 세부 평가 지표 구성, Notion template 구축, Error Analysis, 모델 앙상블 |
+| 한나영 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | MobileNetV2, FaceNet | EDA, 세부 평가 지표 구성, Notion template 구축, Error Analysis, 모델 앙상블 |
 
 ## ❓ Problem Overview
 
