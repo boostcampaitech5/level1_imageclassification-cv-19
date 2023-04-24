@@ -182,7 +182,6 @@ def train(data_dir, model_dir, args):
         lr=args.lr,
         weight_decay=5e-4
     )
-    #scheduler = StepLR(optimizer, args.lr_decay_step, gamma=0.5)
     scheduler = CosineAnnealingLR(optimizer, T_max=5, eta_min=1e-4)
     
     # -- logging
@@ -199,12 +198,6 @@ def train(data_dir, model_dir, args):
         age_label = torch.concat((age_label, age_lb.to(age_label.device)), dim = 0)
         
         return mask_label, gen_label, age_label
-
-    def concat_single_label(labels, single_label):
-        single_lb = dataset.decode_multi_class(labels) 
-        single_label = torch.concat((single_label, single_lb.to(single_label.device)), dim = 0)
-        
-        return single_lb
         
     best_val_acc = 0
     best_val_loss = np.inf
@@ -241,17 +234,10 @@ def train(data_dir, model_dir, args):
                 logger.add_scalar("Train/loss", train_loss, epoch * len(train_loader) + idx)
                 logger.add_scalar("Train/accuracy", train_acc, epoch * len(train_loader) + idx)
 
-                #train_acc_per_class = acc_per_class(preds, labels, num_classes)
-
                 wandb.log({
                 "Train loss": train_loss,
                 "Train acc" : train_acc,
                 }) #, step = idx)
-                
-                # for i in range(num_classes):
-                #     wandb.log({
-                #         "Class "+str(i): train_acc_per_class[i]
-                #     })
                 
                 loss_value = 0
                 matches = 0
@@ -345,14 +331,6 @@ def train(data_dir, model_dir, args):
                 "(Age) OLD ": val_age_acc[2],
             })
 
-            
-            # for i in range(num_classes):
-            #     wandb.log({
-            #             "Class "+str(i): val_acc_per_class[i]
-            #     })
-                
-                
-        #wandb.finish()  
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -385,6 +363,3 @@ if __name__ == '__main__':
     model_dir = args.model_dir
 
     train(data_dir, model_dir, args)
-
-
-#python3 custom_train.py --model 'MobileNet' --name 'MobileNet_ageonly_uppercrop_ce' --augmentation 'UpperFaceCropAugmentation' --epoch 30
