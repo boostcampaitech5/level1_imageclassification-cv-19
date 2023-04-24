@@ -33,7 +33,7 @@ class BaseModel(nn.Module):
         x = x.view(-1, 128)
         return self.fc(x)
 
-#EfficientNet (torchvision=0.8.1에는 없음, 0.13 이상!)
+#EfficientNet
 class EfficientNet(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
