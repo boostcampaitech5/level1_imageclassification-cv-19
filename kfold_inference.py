@@ -29,12 +29,8 @@ def inference(data_dir, model_dir, output_dir, args):
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    num_classes = MaskBaseDataset.num_classes  # 18
-    #model_dir_list = os.listdir(model_dir)
-    model_dir_list = ['/opt/ml/results/MobileNet5fold_baseaug_ce/MobileNet5fold_baseaug_ce-0', 
-                      '/opt/ml/results/MobileNet5fold_baseaug_ce/MobileNet5fold_baseaug_ce-3', 
-                      '/opt/ml/results/MobileNet5fold_baseaug_ce/MobileNet5fold_baseaug_ce-4'
-                      ]
+    num_classes = MaskBaseDataset.num_classes  
+    model_dir_list = os.listdir(model_dir)
     oof_pred = None
     for fold_model in model_dir_list:
         fold_model_path = os.path.join(model_dir, fold_model)
@@ -62,7 +58,6 @@ def inference(data_dir, model_dir, output_dir, args):
             for idx, images in enumerate(loader):
                 images = images.to(device)
                 pred = model(images)
-                #pred = pred.argmax(dim=-1)
                 preds.extend(pred.cpu().numpy())
             fold_pred = np.array(preds)
         n_splits = len(model_dir_list)
@@ -76,7 +71,6 @@ def inference(data_dir, model_dir, output_dir, args):
 
     info['ans'] = np.argmax(oof_pred, axis=1)
     save_path = os.path.join(output_dir, f'output.csv')
-    # save_path = os.path.join(output_dir, f'{args.model_name}.csv')
     info.to_csv(save_path, index=False)
     print(f"Inference Done! Inference result saved at {save_path}")
 
@@ -104,4 +98,3 @@ if __name__ == '__main__':
 
     inference(data_dir, model_dir, output_dir, args)
     
-    #python3 kfold_inference.py --model 'MobileNet' --model_dir '/opt/ml/results/2023-04-19-21:36:46'
