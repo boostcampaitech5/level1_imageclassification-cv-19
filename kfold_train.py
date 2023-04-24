@@ -125,8 +125,6 @@ def train(data_dir, model_dir, args):
     #save_dir = increment_path(os.path.join(model_dir, args.name))
     save_dir = os.path.join(model_dir, args.name) # ./model/현재 날짜
     for fold, (train_ids, test_ids) in enumerate(skfold.split(X=train_csv.id, y=train_csv.label)):
-        # if fold > 0:
-        #     break 
         save_fold_name = args.name + '-' + str(fold)
         save_fold_dir = os.path.join(save_dir, save_fold_name)
         #train_ids와 test_ids에서는 2700개의 데이터에서의 인덱스를 넘겨줍니다.
@@ -186,8 +184,7 @@ def train(data_dir, model_dir, args):
             pin_memory=use_cuda,
             drop_last=True,
         )
-        # pretrained.requires_grad_(False)
-        # pretrained.fc.requires_grad_(True)
+
         # -- model
         model_module = getattr(import_module(
             "model"), args.model)  # default: BaseModel
@@ -216,10 +213,7 @@ def train(data_dir, model_dir, args):
 
         # -- wandb
         wandb.init(project= args.model+'_'+str(args.k)+'fold', entity='level1-cv19', name=f'{args.name}-{str(fold)}', config=vars(args))
-        #wandb.run.save()
         wandb.config = args
-        
-        #wandb.tensorboard.patch(save=False, tensorboard_x=True)
         
         # -- for calculating label acc per class 
         def concat_label(labels, mask_label, gen_label, age_label):
@@ -413,5 +407,4 @@ if __name__ == '__main__':
     model_dir = args.model_dir
 
     train(data_dir, model_dir, args)
-    
-    #python3 kfold_train.py --augmentation 'UpperFaceCropAugmentation' --model 'MobileNet' --criterion 'focal' --name 'MobileKfoldTest'
+   
