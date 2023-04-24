@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models 
+from facenet_pytorch import MTCNN, InceptionResnetV1, fixed_image_standardization, training
 
 class BaseModel(nn.Module):
     def __init__(self, num_classes):
@@ -32,8 +33,8 @@ class BaseModel(nn.Module):
         x = x.view(-1, 128)
         return self.fc(x)
 
-#EfficientNet (torchvision=0.8.1에는 없음, 0.13 이상!)
-class ENet(nn.Module):
+#EfficientNet
+class EfficientNet(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
 
@@ -49,40 +50,48 @@ class ENet(nn.Module):
         x = self.enet(x)
         return self.fc(x)
     
-# Custom Model Template
+# MobileNet
 class MobileNet(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
 
-        self.mobilenet = torchvision.models.mobilenet_v2(pretrained=True)
-        self.dropout1 = nn.Dropout(0.25)
-        self.dropout2 = nn.Dropout(0.25)
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.relu = nn.ReLU()
-        self.fc = nn.Linear(1000, num_classes)
+        weights=torchvision.models.MobileNet_V2_Weights.DEFAULT
+        self.mobilenet = torchvision.models.mobilenet_v2(weights = weights)
+        #self.dropout = nn.Dropout(0.25)
+        #self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        #self.relu = nn.ReLU()
+        self.mobilenet.classifier[1] = nn.Linear(1280, num_classes)
 
     def forward(self, x):
         x = self.mobilenet(x)
+        return x
+
+# FaceNet
+class FaceNet(nn.Module):
+    def __init__(self, num_classes):
+        super().__init__()
+        
+        # For a model pretrained on VGGFace2
+        self.facenet = InceptionResnetV1(pretrained='vggface2')
+        self.facenet.classify = True
+        self.relu = nn.ReLU()
+        self.fc = nn.Linear(8631, num_classes)                
+           
+    def forward(self, x):
+        
+        x = self.facenet(x)
         x = self.relu(x)
-        x = self.dropout1(x)
-        #x = self.avgpool(x)
-        #x = x.view(-1, 128)
         return self.fc(x)
 
-# Custom Model Template
-class MyModel(nn.Module):
+# ResNet
+class ResNet(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
 
-        """
-        1. 위와 같이 생성자의 parameter 에 num_claases 를 포함해주세요.
-        2. 나만의 모델 아키텍쳐를 디자인 해봅니다.
-        3. 모델의 output_dimension 은 num_classes 로 설정해주세요.
-        """
+        weights=torchvision.models.ResNet34_Weights.DEFAULT
+        self.mobilenet = torchvision.models.resnet34(weights = weights)
+        self.mobilenet.classifier[1] = nn.Linear(1280, num_classes)
 
     def forward(self, x):
-        """
-        1. 위에서 정의한 모델 아키텍쳐를 forward propagation 을 진행해주세요
-        2. 결과로 나온 output 을 return 해주세요
-        """
+        x = self.mobilenet(x)
         return x
