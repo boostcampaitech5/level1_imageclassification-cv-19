@@ -12,7 +12,7 @@ level1_imageclassification-cv-19 created by GitHub Classroom
 
 | 강동화 | 박준서 | 서지희 | 장철호 | 한나영 |
 | --- | --- | --- | --- | --- |
-|  |  |  |  |< img src = "https://user-images.githubusercontent.com/19367749/233942047-3ed564cf-d770-4c70-8358-09a4731a227f.jpg" width="120" height="120" />|
+|  |  |  |  |<img src = "https://user-images.githubusercontent.com/19367749/233942047-3ed564cf-d770-4c70-8358-09a4731a227f.jpg" width="120" height="120" />|
 | [@oktaylor](https://github.com/oktaylor) | [@Pjunn](https://github.com/Pjunn) | [@muyaaho](https://github.com/muyaaho) | [@JCH1410](https://github.com/JCH1410) | [@Bandi120424](https://github.com/Bandi120424) |
 
 ![profile.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/33cb71b0-e4b7-4544-a9dc-97693f7f6c22/profile.jpg)
