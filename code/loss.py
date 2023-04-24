@@ -5,12 +5,13 @@ import torch.nn.functional as F
 
 # https://discuss.pytorch.org/t/is-this-a-correct-implementation-for-focal-loss-in-pytorch/43327/8
 class FocalLoss(nn.Module):
-    def __init__(self, weight=None,
-                 gamma=2., reduction='mean'):
+    def __init__(self, weight=None, classes = 3*2*3,
+                 gamma=1., reduction='mean'):
         nn.Module.__init__(self)
         self.weight = weight
         self.gamma = gamma
         self.reduction = reduction
+        self.classes = classes
 
     def forward(self, input_tensor, target_tensor):
         log_prob = F.log_softmax(input_tensor, dim=-1)
@@ -24,7 +25,7 @@ class FocalLoss(nn.Module):
 
 
 class LabelSmoothingLoss(nn.Module):
-    def __init__(self, classes=3, smoothing=0.0, dim=-1):
+    def __init__(self, classes=3*2*3, smoothing=0.1, dim=-1):
         super(LabelSmoothingLoss, self).__init__()
         self.confidence = 1.0 - smoothing
         self.smoothing = smoothing
@@ -42,7 +43,7 @@ class LabelSmoothingLoss(nn.Module):
 
 # https://gist.github.com/SuperShinyEyes/dcc68a08ff8b615442e3bc6a9b55a354
 class F1Loss(nn.Module):
-    def __init__(self, classes=3, epsilon=1e-7):
+    def __init__(self, classes=3*2*3, epsilon=1e-7):
         super().__init__()
         self.classes = classes
         self.epsilon = epsilon
@@ -65,9 +66,21 @@ class F1Loss(nn.Module):
         f1 = f1.clamp(min=self.epsilon, max=1 - self.epsilon)
         return 1 - f1.mean()
 
+class CELoss(nn.Module):
+    def __init__(self, classes=3*2*3):
+        nn.Module.__init__(self)
+        self.celoss = nn.CrossEntropyLoss()
+        self.cls = classes
+        
+    def forward(self, input_tensor, target_tensor):
+        return self.celoss(input_tensor, target_tensor)
+        
+        
+# celoss = CELoss(3)
+# celoss(torch.randn(3, 5, requires_grad=True), torch.empty(3, dtype=torch.long).random_(5))
 
 _criterion_entrypoints = {
-    'cross_entropy': nn.CrossEntropyLoss,
+    'cross_entropy': CELoss,
     'focal': FocalLoss,
     'label_smoothing': LabelSmoothingLoss,
     'f1': F1Loss
