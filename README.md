@@ -13,14 +13,14 @@ level1_imageclassification-cv-19 created by GitHub Classroom
 | 강동화 | 박준서 | 서지희 | 장철호 | 한나영 |
 | --- | --- | --- | --- | --- |
 |  |  |  |  |  |
-| https://github.com/oktaylor | https://github.com/Pjunn | https://github.com/muyaaho | https://github.com/JCH1410 | https://github.com/Bandi120424 |
+| [@oktaylor](https://github.com/oktaylor) | [@Pjunn](https://github.com/Pjunn) | [@muyaaho](https://github.com/muyaaho) | [@JCH1410](https://github.com/JCH1410) | [@Bandi120424](https://github.com/Bandi120424) |
 
 ![profile.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/33cb71b0-e4b7-4544-a9dc-97693f7f6c22/profile.jpg)
 
 ## 🌏 Contributions
 
 | 이름 | 학습 모델 | 추가 작업 |
-| --- | --- | --- |
+| :---: | --- | --- |
 | 강동화 | VGG, ViT, MobileNet | 날짜명으로 convention 통일, Data Augmentation을 통해 추가 데이터 구성, Error Analysis, 모델 앙상블 |
 | 박준서 | MobileNetV2, ResNet, ConvNext Tiny | Wandb 실험 환경 구성, 교차 검증 셋팅, Error Analysis, 모델 앙상블 |
 | 서지희 | EfficientNet | Notion template 구축, Error Analysis, 모델 앙상블 |
