@@ -209,12 +209,12 @@ def train(data_dir, model_dir, args):
                 val_loss_items.append(loss_item)
                 val_acc_items.append(acc_item)
 
-                # if figure is None:
-                #     inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
-                #     inputs_np = dataset_module.denormalize_image(inputs_np, dataset.mean, dataset.std)
-                #     figure = grid_image(
-                #         inputs_np, labels, preds, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"
-                #     )
+                if figure is None:
+                    inputs_np = torch.clone(inputs).detach().cpu().permute(0, 2, 3, 1).numpy()
+                    inputs_np = dataset_module.denormalize_image(inputs_np, dataset.mean, dataset.std)
+                    figure = grid_image(
+                        inputs_np, labels, preds, n=16, shuffle=args.dataset != "MaskSplitByProfileDataset"
+                    )
 
             val_loss = np.sum(val_loss_items) / len(val_loader)
             val_acc = np.sum(val_acc_items) / len(val_set)
@@ -230,7 +230,7 @@ def train(data_dir, model_dir, args):
             )
             logger.add_scalar("Val/loss", val_loss, epoch)
             logger.add_scalar("Val/accuracy", val_acc, epoch)
-            #logger.add_figure("results", figure, epoch)
+            logger.add_figure("results", figure, epoch)
             print()
 
 
