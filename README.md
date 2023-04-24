@@ -12,7 +12,7 @@ level1_imageclassification-cv-19 created by GitHub Classroom
 ## 🙌 Members
 
 | 강동화 | 박준서 | 서지희 | 장철호 | 한나영 |
-| --- | --- | --- | --- | --- |
+| :---: | :---: | :---: | :---: | :---: |
 | <img src = "https://user-images.githubusercontent.com/76798969/233944092-f52c7efe-d4ef-4777-b26c-e78063595377.png" width="120" height="120"> |  |  |  |<img src = "https://user-images.githubusercontent.com/76798969/233944944-7ff16045-a005-4e4e-bf59-632766194d7f.png" width="120" height="120" />|
 | [@oktaylor](https://github.com/oktaylor) | [@Pjunn](https://github.com/Pjunn) | [@muyaaho](https://github.com/muyaaho) | [@JCH1410](https://github.com/JCH1410) | [@Bandi120424](https://github.com/Bandi120424) |
 
@@ -26,7 +26,7 @@ level1_imageclassification-cv-19 created by GitHub Classroom
 | 박준서 | MobileNetV2, ResNet, ConvNext Tiny | Wandb 실험 환경 구성, 교차 검증 셋팅, Error Analysis, 모델 앙상블 |
 | 서지희 | EfficientNet | Notion template 구축, Error Analysis, 모델 앙상블 |
 | 장철호 | DenseNet | Error Analysis, 모델 앙상블 |
-| 한나영 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | MobileNetV2, FaceNet | EDA, 세부 평가 지표 구성, Notion template 구축, Error Analysis, 모델 앙상블 |
+| 한나영 | MobileNetV2, FaceNet | EDA, 세부 평가 지표 구성, Notion template 구축, Error Analysis, 모델 앙상블 |
 
 ## ❓ Problem Overview
 
