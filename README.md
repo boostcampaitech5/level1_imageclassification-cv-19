@@ -1,21 +1,22 @@
 # level1_imageclassification-cv-19
 level1_imageclassification-cv-19 created by GitHub Classroom
 
-## Project Overview
+## ✏️ Project Overview
 
 
 
 - Project Period 2023/04/10 ~ 2023/04/20
 - Project Wrap-Up Report **[Mask Detection Wrap-up Report](https://docs.google.com/document/d/1STQpw1djeaGu-y6Z17kxUxizX55Ct22jSXZJEUQ-OuM/edit?usp=sharing)**
 
+
 ## 🙌 Members
 
 | 강동화 | 박준서 | 서지희 | 장철호 | 한나영 |
 | --- | --- | --- | --- | --- |
-|  |  |  |  |<img src = "https://user-images.githubusercontent.com/19367749/233942047-3ed564cf-d770-4c70-8358-09a4731a227f.jpg" width="120" height="120" />|
+| <img src = "https://user-images.githubusercontent.com/76798969/233944092-f52c7efe-d4ef-4777-b26c-e78063595377.png" width="120" height="120"> |  |  |  |<img src = "https://user-images.githubusercontent.com/76798969/233944944-7ff16045-a005-4e4e-bf59-632766194d7f.png" width="120" height="120" />|
 | [@oktaylor](https://github.com/oktaylor) | [@Pjunn](https://github.com/Pjunn) | [@muyaaho](https://github.com/muyaaho) | [@JCH1410](https://github.com/JCH1410) | [@Bandi120424](https://github.com/Bandi120424) |
 
-![profile.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/33cb71b0-e4b7-4544-a9dc-97693f7f6c22/profile.jpg)
+
 
 ## 🌏 Contributions
 
@@ -39,7 +40,7 @@ COVID-19은 강력한 전염력을 가지고 있습니다. 감염 확산 방지�
 - Number of Datasets: 4500 * 7[마스크 착용 5장, 이상하게 착용 1장, 미착용 1장]
 - Labels:
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bc4c915a-95f8-40df-aa51-4dece5ef9056/Untitled.png)
+    ![image](https://user-images.githubusercontent.com/76798969/233945243-b31bbf2d-bef2-4ac8-9a89-8d60b6b3c254.png)
     
 - Image Size: (384, 512)
 - Train: 2,700 * 7 (전체 데이터의 60%)
@@ -58,7 +59,7 @@ COVID-19은 강력한 전염력을 가지고 있습니다. 감염 확산 방지�
 - annotation
     - ImageID : 이미지의 고유 ID
     - ans : 이미지가 해당하는 class의 ID
-- 
+
 
 ## 🖥️ ****Development Environment****
 
