@@ -16,7 +16,7 @@ level1_imageclassification-cv-19 created by GitHub Classroom
 | [@oktaylor](https://github.com/oktaylor) | [@Pjunn](https://github.com/Pjunn) | [@muyaaho](https://github.com/muyaaho) | [@JCH1410](https://github.com/JCH1410) | [@Bandi120424](https://github.com/Bandi120424) |
 
 ![profile.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/33cb71b0-e4b7-4544-a9dc-97693f7f6c22/profile.jpg)
-
+<!-- 사진은 파워포인트로 동그랗게 만들어서 넣은 것으로 추정합니다 -->
 ## 🌏 Contributions
 
 | 이름 | 학습 모델 | 추가 작업 |
@@ -25,8 +25,8 @@ level1_imageclassification-cv-19 created by GitHub Classroom
 | 박준서 | MobileNetV2, ResNet, ConvNext Tiny | Wandb 실험 환경 구성, 교차 검증 셋팅, Error Analysis, 모델 앙상블 |
 | 서지희 | EfficientNet | Notion template 구축, Error Analysis, 모델 앙상블 |
 | 장철호 | DenseNet | Error Analysis, 모델 앙상블 |
-| 한나영 | MobileNetV2, FaceNet | EDA, 세부 평가 지표 구성, Notion template 구축, Error Analysis, 모델 앙상블 |
-
+| 한나영 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | MobileNetV2, FaceNet | EDA, 세부 평가 지표 구성, Notion template 구축, Error Analysis, 모델 앙상블 |
+<!-- 강제로 공백을 넣었습니다.. -->
 ## ❓ Problem Overview
 
 COVID-19은 강력한 전염력을 가지고 있습니다. 감염 확산 방지를 위해 무엇보다 중요한 것은 모든 사람이 마스크로 코와 입을 가려서 혹시 모를 감염자로부터의 전파 경로를 원천 차단하는 것입니다. 이를 위해 공공 장소에 있는 사람들은 반드시 코와 입을 완전히 가릴 수 있도록 마스크를 올바르게 착용해야합니다. 하지만 이러한 마스크 착용 상태를 검사하기 위해서는 추가적인 인적자원이 필요할 것입니다.
@@ -39,7 +39,7 @@ COVID-19은 강력한 전염력을 가지고 있습니다. 감염 확산 방지�
 - Number of Datasets: 4500 * 7[마스크 착용 5장, 이상하게 착용 1장, 미착용 1장]
 - Labels:
     
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/bc4c915a-95f8-40df-aa51-4dece5ef9056/Untitled.png)
+    ![image](https://user-images.githubusercontent.com/76798969/233941170-bd4592d9-084b-4bd9-ab3c-a98c559f3797.png)
     
 - Image Size: (384, 512)
 - Train: 2,700 * 7 (전체 데이터의 60%)
