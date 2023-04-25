@@ -37,7 +37,7 @@ COVID-19은 강력한 전염력을 가지고 있습니다. 감염 확산 방지�
 ## 📂 Datasets
 
 - Number of Classes: 18
-- Number of Datasets: 4500 * 7[마스크 착용 5장, 이상하게 착용 1장, 미착용 1장]
+- Number of Datasets: 4500 * 7 [마스크 착용 5장, 이상하게 착용 1장, 미착용 1장]
 - Labels:
     ![image](https://user-images.githubusercontent.com/76798969/233945243-b31bbf2d-bef2-4ac8-9a89-8d60b6b3c254.png)
 - Image Size: (384, 512)
