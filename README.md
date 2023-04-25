@@ -13,7 +13,7 @@ level1_imageclassification-cv-19 created by GitHub Classroom
 
 | 강동화 | 박준서 | 서지희 | 장철호 | 한나영 |
 | :---: | :---: | :---: | :---: | :---: |
-| <img src = "https://user-images.githubusercontent.com/76798969/233944092-f52c7efe-d4ef-4777-b26c-e78063595377.png" width="120" height="120"> | <img src = "https://user-images.githubusercontent.com/89245460/234033594-cb90a3c0-f0dc-4218-9e11-2abc8db2be67.png" width="120" height="120"> |  |  |<img src = "https://user-images.githubusercontent.com/76798969/233944944-7ff16045-a005-4e4e-bf59-632766194d7f.png" width="120" height="120" />|
+| <img src = "https://user-images.githubusercontent.com/76798969/233944092-f52c7efe-d4ef-4777-b26c-e78063595377.png" width="120" height="120"> | <img src = "https://user-images.githubusercontent.com/89245460/234033594-cb90a3c0-f0dc-4218-9e11-2abc8db2be67.png" width="120" height="120"> |<img src = "https://user-images.githubusercontent.com/76798969/234210787-18a54ddb-ae13-4554-960e-6bd45d7905fb.png" width="120" height="120">  |  |<img src = "https://user-images.githubusercontent.com/76798969/233944944-7ff16045-a005-4e4e-bf59-632766194d7f.png" width="120" height="120" />|
 | [@oktaylor](https://github.com/oktaylor) | [@Pjunn](https://github.com/Pjunn) | [@muyaaho](https://github.com/muyaaho) | [@JCH1410](https://github.com/JCH1410) | [@Bandi120424](https://github.com/Bandi120424) |
 
 
