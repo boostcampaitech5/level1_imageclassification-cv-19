@@ -20,9 +20,9 @@ level1_imageclassification-cv-19 created by GitHub Classroom
 
 ## 🌏 Contributions
 
-| 이름 | 학습 모델 | 추가 작업 |
+| 팀원명 | 학습 모델 | 추가 작업 |
 | :---: | --- | --- |
-| 강동화 | VGG, ViT, MobileNet | 날짜명으로 convention 통일, Data Augmentation을 통해 추가 데이터 구성, Error Analysis, 모델 앙상블 |
+| 강동화  | VGG, ViT, MobileNet | 날짜명으로 convention 통일, Data Augmentation을 통해 추가 데이터 구성, Error Analysis, 모델 앙상블 |
 | 박준서 | MobileNetV2, ResNet, ConvNext Tiny | Wandb 실험 환경 구성, 교차 검증 구현 및 셋팅, Error Analysis, 모델 앙상블 |
 | 서지희 | EfficientNet | Notion template 구축, Error Analysis, 모델 앙상블 |
 | 장철호 | DenseNet | Error Analysis, 모델 앙상블 |
